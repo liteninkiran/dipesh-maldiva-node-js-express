@@ -31,11 +31,16 @@ const createContact = asyncHandler(async (req, res) => {
 // @route GET /api/contacts/:id
 // @access private
 const getContact = asyncHandler(async (req, res) => {
+    // Find contact
     const contact = await Contact.findById(req.params.id);
+
+    // Check if contact exists
     if (!contact) {
         res.status(404);
         throw new Error(`Contact ${req.params.id} not found`);
     }
+
+    // Return the contact
     res.status(200).json(contact);
 });
 
@@ -43,16 +48,29 @@ const getContact = asyncHandler(async (req, res) => {
 // @route PUT /api/contacts/:id
 // @access private
 const updateContact = asyncHandler(async (req, res) => {
+    // Find contact
     const contact = await Contact.findById(req.params.id);
+
+    // Check if contact exists
     if (!contact) {
         res.status(404);
         throw new Error(`Contact ${req.params.id} not found`);
     }
+
+    // Check if user is allowed to update the contact
+    if (contact.user_id.toString() !== req.user.id) {
+        res.status(403);
+        throw new Error(`User does not have permission to update contact ${req.params.id}`);
+    }
+
+    // Update the contact
     const updatedContact = await Contact.findByIdAndUpdate(
         req.params.id,
         req.body,
         { new: true }
     );
+
+    // Return the updated contact
     res.status(200).json(updatedContact);
 });
 
@@ -60,12 +78,25 @@ const updateContact = asyncHandler(async (req, res) => {
 // @route DELETE /api/contacts/:id
 // @access private
 const deleteContact = asyncHandler(async (req, res) => {
+    // Find contact
     const contact = await Contact.findById(req.params.id);
+
+    // Check if contact exists
     if (!contact) {
         res.status(404);
         throw new Error(`Contact ${req.params.id} not found`);
     }
+
+    // Check if user is allowed to delete the contact
+    if (contact.user_id.toString() !== req.user.id) {
+        res.status(403);
+        throw new Error(`User does not have permission to delete contact ${req.params.id}`);
+    }
+
+    // Delete the contact
     await Contact.deleteOne({ _id: req.params.id });
+
+    // Return the updated contact
     res.status(200).json(contact);
 });
 
