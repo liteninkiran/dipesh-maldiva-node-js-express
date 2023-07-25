@@ -13,7 +13,6 @@ const errorHandler = (err, req, res, next) => {
         case constants.UNAUTHORIZED     : object.title = 'Unauthorized'      ; break;
         case constants.FORBIDDEN        : object.title = 'Forbidden'         ; break;
         case constants.SERVER_ERROR     : object.title = 'Server Error'      ; break;
-        default                         : console.log('No Error, All good !'); break;
     }
 
     if (object.title) {
