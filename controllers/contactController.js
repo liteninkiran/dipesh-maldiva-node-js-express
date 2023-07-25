@@ -55,7 +55,13 @@ const updateContact = asyncHandler(async (req, res) => {
 // @route DELETE /api/contacts/:id
 // @access public
 const deleteContact = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: `Delete contact for ${req.params.id}`});
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) {
+        res.status(404);
+        throw new Error(`Contact ${req.params.id} not found`);
+    }
+    await Contact.deleteOne({ _id: req.params.id });
+    res.status(200).json(contact);
 });
 
 module.exports = {
